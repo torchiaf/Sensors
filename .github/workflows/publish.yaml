@@ -17,6 +17,7 @@ jobs:
       image-name: dht11
       tag-name: ${{ github.ref_name }}
       working-directory: raspberrypi/DHT11
+      platforms: linux/arm64
     permissions:
       contents: read
       packages: write
