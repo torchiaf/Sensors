@@ -1,7 +1,7 @@
 - Add labels and selectors to raspberry nodes
-- Python restAPI on each raspberry node to expose data from sensors
+- Python rabbitMQ on each raspberry node to expose data from sensors
 - Implement OpenAPI definitions
-- Golang process on master node to call the rest endpoints, fetch data and update CRDS
+- Golang process on master node to call the rabbitMQ endpoints, fetch data and update CRDS
 - Pin and raspberry version should be parameters
 - Create Helm repo
 - Create Rancher extensions to handle sensors CRDs
