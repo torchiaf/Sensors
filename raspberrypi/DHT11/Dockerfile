@@ -18,4 +18,4 @@ ADD . /work
 WORKDIR /work
 
 ENV RASPBERRYPI_VERSION=${RASPBERRYPI_VERSION}
-CMD ["/pi-venv/bin/python3","start.py","12"]
+CMD ["/pi-venv/bin/python3","read.py","12"]
