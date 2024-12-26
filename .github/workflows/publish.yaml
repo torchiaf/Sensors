@@ -1,0 +1,22 @@
+name: Publish
+
+on:
+  push:
+    tags:
+      - v*
+    branches:
+      - main
+    paths:
+      - 'raspberry/**'
+      - '.github/**'
+
+jobs:
+  build-and-push-raspberrypi-DHT11:
+    uses: ./.github/workflows/docker-push.yaml
+    with:
+      image-name: dht11
+      tag-name: ${{ github.ref_name }}
+      working-directory: raspberrypi/DHT11
+    permissions:
+      contents: read
+      packages: write
