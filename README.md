@@ -1,6 +1,10 @@
 # Sensors
 
-## Sensors handles IoT devices mounted on Raspberry PI modules in a Kubernetes cluster.
+## Sensors handles IoT devices mounted on Raspberry Pi modules in a Kubernetes cluster.
+
+### Hardware
+
+TODO
 
 ### Create a k3s cluster
 
@@ -12,15 +16,15 @@ https://docs.k3s.io/quick-start#install-script
     curl -sfL https://get.k3s.io | sh -
     ```
 
-- Add raspberry agent nodes
+- Add Raspberry Pi agent nodes
     
     ```
     curl -sfL https://get.k3s.io | K3S_URL=https://myserver:6443 K3S_TOKEN=mynodetoken sh -
     ```
 
-- Important! Add `sensors.role: worker` label to each raspberry nodes
+- Important! Add `sensors.role: worker` label to each Raspberry Pi node
 
-### Create sensors namespace
+### Create `sensors` namespace
 
     kubectl create namespace sensors
 
@@ -29,7 +33,7 @@ https://docs.k3s.io/quick-start#install-script
     helm install rabbitmq-operator charts/rabbitmq-operator -n sensors
     helm install rabbitmq-cluster charts/rabbitmq-cluster --values charts/settings.yaml -n sensors
 
-- Wait for RabbitMQ deployments to be ready
+- Wait for RabbitMQ operator and cluster to be ready
 
 ### Install Sensors
 
