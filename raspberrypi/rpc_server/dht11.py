@@ -3,7 +3,7 @@ from time import sleep
 
 import Adafruit_DHT
 
-def read(pin):
+def read():
     sensor = Adafruit_DHT.DHT11
     pin = int(os.environ.get('DHT11_PIN'))
 
