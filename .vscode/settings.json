@@ -1,8 +1,11 @@
 {
     "cSpell.words": [
         "Adafruit",
+        "amqp",
         "Buildx",
+        "rabbitmq",
         "RASPBERRYPI",
+        "setuptools",
         "venv"
     ]
 }

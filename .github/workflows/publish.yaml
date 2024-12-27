@@ -11,12 +11,12 @@ on:
       - '.github/**'
 
 jobs:
-  build-and-push-raspberrypi-DHT11:
+  build-and-push-raspberrypi:
     uses: ./.github/workflows/docker-push.yaml
     with:
-      image-name: dht11
+      image-name: raspberrypi
       tag-name: ${{ github.ref_name }}
-      working-directory: raspberrypi/DHT11
+      working-directory: raspberrypi
       platforms: linux/arm64
     permissions:
       contents: read
