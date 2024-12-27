@@ -31,7 +31,7 @@ func randInt(min int, max int) int {
 	return min + rand.Intn(max-min)
 }
 
-func exec() (res int, err error) {
+func exec() (res string, err error) {
 
 	host := os.Getenv("RABBITMQ_CLUSTER_SERVICE_HOST")
 	port := os.Getenv("RABBITMQ_CLUSTER_SERVICE_PORT")
@@ -91,8 +91,8 @@ func exec() (res int, err error) {
 
 	for d := range msgs {
 		if corrId == d.CorrelationId {
-			res, err = strconv.Atoi(string(d.Body))
-			failOnError(err, "Failed to convert body to integer")
+			res = string(d.Body)
+			failOnError(err, "Error msgs")
 			break
 		}
 	}
