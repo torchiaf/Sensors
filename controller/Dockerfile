@@ -4,6 +4,6 @@ RUN cd /sensors && go build -o controller
 
 FROM alpine
 WORKDIR /controller
-COPY --from=build /app /controller
+COPY --from=build /sensors /controller
 
 ENTRYPOINT ["./controller"]
