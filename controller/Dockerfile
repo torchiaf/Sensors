@@ -6,4 +6,4 @@ FROM alpine
 WORKDIR /controller
 COPY --from=build /sensors /controller
 
-ENTRYPOINT ["./controller"]
+CMD ["./controller"]
