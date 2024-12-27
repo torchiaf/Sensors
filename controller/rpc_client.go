@@ -34,7 +34,7 @@ func randInt(min int, max int) int {
 func exec() (res string, err error) {
 
 	host := os.Getenv("RABBITMQ_CLUSTER_SERVICE_HOST")
-	port := os.Getenv("RABBITMQ_CLUSTER_SERVICE_PORT")
+	port := os.Getenv("RABBITMQ_CLUSTER_SERVICE_PORT_AMQP")
 
 	username := os.Getenv("RMQ_USERNAME")
 	password := os.Getenv("RMQ_PASSWORD")
