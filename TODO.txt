@@ -5,3 +5,4 @@
 - Pin and raspberry version should be parameters
 - Create Helm repo
 - Create Rancher extensions to handle sensors CRDs
+- The controller and RabbitMQ operator must run on master node

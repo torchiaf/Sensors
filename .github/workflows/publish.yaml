@@ -7,10 +7,21 @@ on:
     branches:
       - main
     paths:
+      - 'controller/**'
       - 'raspberrypi/**'
       - '.github/**'
 
 jobs:
+  build-and-push-controller:
+    uses: ./.github/workflows/docker-push.yaml
+    with:
+      image-name: controller
+      tag-name: ${{ github.ref_name }}
+      working-directory: controller
+    permissions:
+      contents: read
+      packages: write
+
   build-and-push-raspberrypi:
     uses: ./.github/workflows/docker-push.yaml
     with:
