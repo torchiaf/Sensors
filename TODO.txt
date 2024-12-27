@@ -6,3 +6,5 @@
 - The controller and RabbitMQ operator must run on master node
 - Fix rabbitmq charts; objects not being removed when uninstalling
 - Redefine docker images
+- Reduce raspberry docker image size
+  - Build python rpc_server in Docker
