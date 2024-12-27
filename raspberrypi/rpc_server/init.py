@@ -1,8 +1,8 @@
-#!/usr/bin/env python
 import pika
 from dht11 import read
+from settings import connectionParams
 
-connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
+connection = pika.BlockingConnection(connectionParams)
 
 channel = connection.channel()
 
