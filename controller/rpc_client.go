@@ -36,8 +36,8 @@ func exec() (res string, err error) {
 	host := os.Getenv("RABBITMQ_CLUSTER_SERVICE_HOST")
 	port := os.Getenv("RABBITMQ_CLUSTER_SERVICE_PORT_AMQP")
 
-	username := os.Getenv("RMQ_USERNAME")
-	password := os.Getenv("RMQ_PASSWORD")
+	username := os.Getenv("RABBITMQ_USERNAME")
+	password := os.Getenv("RABBITMQ_PASSWORD")
 	// monitorRoutingKey := os.Getenv("ROUTE_1")
 
 	address := fmt.Sprintf("amqp://%s:%s@%s:%s/", username, password, host, port)
