@@ -103,13 +103,16 @@ func exec() (res int, err error) {
 func main() {
 	rand.Seed(time.Now().UTC().UnixNano())
 
-	// n := bodyFrom(os.Args)
+	for {
 
-	log.Printf(" [x] Requesting")
-	res, err := exec()
-	failOnError(err, "Failed to handle RPC request")
+		log.Printf(" [x] Requesting")
+		res, err := exec()
+		failOnError(err, "Failed to handle RPC request")
 
-	log.Printf(" [.] Got %d", res)
+		log.Printf(" [.] Got %+v", res)
+
+		time.Sleep(time.Second)
+	}
 }
 
 func bodyFrom(args []string) int {
