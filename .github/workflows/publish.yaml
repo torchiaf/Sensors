@@ -18,6 +18,7 @@ jobs:
       image-name: controller
       tag-name: ${{ github.ref_name }}
       working-directory: controller
+      platforms: ''
     permissions:
       contents: read
       packages: write
