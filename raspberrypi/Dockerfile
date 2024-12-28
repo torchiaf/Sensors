@@ -1,11 +1,19 @@
-FROM debian
-
 ARG RASPBERRYPI_VERSION=3
 
-RUN apt-get clean && apt-get update
-RUN apt-get install python3-pip python3.11-venv git -y
+FROM python:3.9.21-alpine AS build
+
+ARG RASPBERRYPI_VERSION
+
+ENV PYTHONUNBUFFERED=1
+
+ADD ./rpc_server /rpc_server
+
+RUN apk update
+RUN apk add git build-base
 
 RUN python3 -m venv pi-venv
+RUN pi-venv/bin/python3 -m pip install --upgrade pip
+RUN pi-venv/bin/pip install -U pyinstaller
 
 # DHT11
 RUN pi-venv/bin/python3 -m pip install --upgrade pip setuptools wheel
@@ -14,16 +22,22 @@ RUN git clone https://github.com/torchiaf/Adafruit_Python_DHT.git
 
 RUN cd Adafruit_Python_DHT && /pi-venv/bin/python3 setup.py install --force-pi${RASPBERRYPI_VERSION}
 RUN /pi-venv/bin/pip3 install ./Adafruit_Python_DHT --config-settings="--build-option=--force-pi${RASPBERRYPI_VERSION}"
-RUN rm -rf /Adafruit_Python_DHT
 
 # RabbitMQ
 RUN pi-venv/bin/python -m pip install pika --upgrade
 
-ADD ./rpc_server /rpc_server
+# Build init.py
+RUN pi-venv/bin/pyinstaller --onefile /rpc_server/init.py
+
+FROM python:3.9.21-alpine
+
+ARG RASPBERRYPI_VERSION
 
 WORKDIR /rpc_server
+
+COPY --from=build /dist/init /rpc_server
 
 ENV RASPBERRYPI_VERSION=${RASPBERRYPI_VERSION}
 ENV DHT11_PIN=12
 
-CMD ["/pi-venv/bin/python3","init.py"]
+CMD ["./init"]
