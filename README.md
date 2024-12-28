@@ -19,10 +19,8 @@ https://docs.k3s.io/quick-start#install-script
 - Add Raspberry Pi agent nodes
     
     ```
-    curl -sfL https://get.k3s.io | K3S_URL=https://myserver:6443 K3S_TOKEN=mynodetoken sh -
+    curl -sfL https://get.k3s.io | K3S_URL=https://myserver:6443 K3S_TOKEN=mynodetoken sh -s - --node-name raspberrypi --node-label sensors.role=worker
     ```
-
-- Important! Add `sensors.role: worker` label to each Raspberry Pi node
 
 ### Create `sensors` namespace
 
