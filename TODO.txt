@@ -4,3 +4,11 @@
 - Create Rancher extensions to handle sensors CRDs
 - Create settings file to define raspberry modules
   - sensors helm charts should get the settings and create as many deployments as the numbers of raspberry modules
+- Create a manifest.yaml file for each supported sensors (svg, description, link to homepage)
+- Create a CRD for each sensor
+- Create a CRD for each raspberry module
+- Bind raspberry CRD to each installed sensor CRD
+- The controller should call a queue for each sensor to fetch data
+- Rancher UI should display
+  - sensor CRD
+  - raspberry CRD
