@@ -1,10 +1,6 @@
-- Add labels and selectors to raspberry nodes - see helm chart values selector
 - Implement OpenAPI definitions
 - Golang process on master node to call the rabbitMQ endpoints, fetch data and update CRDS
 - Pin and raspberry version should be parameters
 - Create Rancher extensions to handle sensors CRDs
-- The controller and RabbitMQ operator must run on master node
-- Fix rabbitmq charts; objects not being removed when uninstalling
-- Redefine docker images
-- Reduce raspberry docker image size
-  - Build python rpc_server in Docker
+- Create settings file to define raspberry modules
+  - sensors helm charts should get the settings and create as many deployments as the numbers of raspberry modules
