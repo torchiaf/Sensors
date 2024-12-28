@@ -4,8 +4,6 @@ FROM python:3.9.21-alpine AS build
 
 ARG RASPBERRYPI_VERSION
 
-ENV PYTHONUNBUFFERED=1
-
 ADD ./rpc_server /rpc_server
 
 RUN apk update
