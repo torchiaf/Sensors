@@ -1,11 +1,11 @@
-import os
-from time import sleep
-
 import Adafruit_DHT
+from config import module
+
+device = module.getDevice("dht11")
 
 def read():
     sensor = Adafruit_DHT.DHT11
-    pin = int(os.environ.get('DHT11_PIN'))
+    pin = int(device.getConfig("DHT11_PIN"))
 
     try:
         humidity, temperature = Adafruit_DHT.read_retry(sensor, pin)

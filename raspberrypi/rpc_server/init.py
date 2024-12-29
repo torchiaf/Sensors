@@ -1,6 +1,9 @@
+import os
 import pika
 from dht11 import read
-from config import connectionParams, print
+from config import module, connectionParams, print
+
+os.environ['RASPBERRYPI_VERSION'] = module.getDevice("dht11").getConfig("RASPBERRYPI_VERSION")
 
 connection = pika.BlockingConnection(connectionParams)
 

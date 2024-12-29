@@ -116,18 +116,20 @@ spec:
               protocol: TCP
           resources:
             {{- toYaml $.Values.resources | nindent 12 }}
-          {{- with $.Values.volumeMounts }}
           volumeMounts:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
+            - name: module
+              mountPath: "/sensors"
           envFrom:
             - secretRef:
                 name: {{ include "sensors.fullname" $ }}-rabbitmq
                 optional: false
-      {{- with $.Values.volumes }}
       volumes:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+      - name: module
+        configMap:
+          name: {{ include "sensors.fullname" $ }}
+          items:
+          - key: {{ $elem.name }}
+            path: module.yaml
       nodeName: {{ $elem.nodeName }}
       {{- with $.Values.nodeSelector }}
       nodeSelector:

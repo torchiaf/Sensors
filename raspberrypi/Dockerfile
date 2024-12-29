@@ -1,8 +1,6 @@
-ARG RASPBERRYPI_VERSION=3
-
 FROM python:3.9.21-alpine AS build
 
-ARG RASPBERRYPI_VERSION
+ARG RASPBERRYPI_VERSION=3
 
 ADD ./rpc_server /rpc_server
 
@@ -11,7 +9,7 @@ RUN apk add git build-base
 
 RUN python3 -m venv pi-venv
 RUN pi-venv/bin/python3 -m pip install --upgrade pip
-RUN pi-venv/bin/pip install -U pyinstaller
+RUN pi-venv/bin/pip install -U pyyaml pyinstaller
 
 # DHT11
 RUN pi-venv/bin/python3 -m pip install --upgrade pip setuptools wheel
@@ -29,13 +27,8 @@ RUN pi-venv/bin/pyinstaller --onefile /rpc_server/init.py
 
 FROM python:3.9.21-alpine
 
-ARG RASPBERRYPI_VERSION
-
 WORKDIR /rpc_server
 
 COPY --from=build /dist/init /rpc_server
-
-ENV RASPBERRYPI_VERSION=${RASPBERRYPI_VERSION}
-ENV DHT11_PIN=12
 
 CMD ["./init"]
