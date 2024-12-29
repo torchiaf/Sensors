@@ -1,3 +1,4 @@
+- Get rabbitmq queue name from config maps in controller and module pods
 - Implement OpenAPI definitions
 - Golang process on master node to call the rabbitMQ endpoints, fetch data and update CRDS
 - Create Rancher extensions to handle sensors CRDs
