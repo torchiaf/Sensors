@@ -1,4 +1,27 @@
-settings:
+sensors:
   rabbitmq:
     username: admin
     password: password
+  modules:
+    - name: raspberrypi-0
+      nodeName: raspberrypi
+      type: raspberrypi
+      rpc_queue: raspberrypi-0
+      devices:
+        - name: dht11
+          env:
+            - name: DHT11_PIN
+              value: "12"
+            - name: RASPBERRYPI_VERSION
+              value: "3"
+    # - name: raspberrypi-1
+    #   nodeName: raspberrypi-1
+    #   type: raspberrypi
+    #   rpc_queue: raspberrypi-0
+    #   devices:
+    #     - name: dht11
+    #       env:
+    #         - name: DHT11_PIN
+    #           value: "12"
+    #         - name: RASPBERRYPI_VERSION
+    #           value: "3"

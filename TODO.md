@@ -1,9 +1,6 @@
 - Implement OpenAPI definitions
 - Golang process on master node to call the rabbitMQ endpoints, fetch data and update CRDS
-- Pin and raspberry version should be parameters
 - Create Rancher extensions to handle sensors CRDs
-- Create settings file to define raspberry modules
-  - sensors helm charts should get the settings and create as many deployments as the numbers of raspberry modules
 - Create a manifest.yaml file for each supported sensors (svg, description, link to homepage)
 - Create a CRD for each sensor
 - Create a CRD for each raspberry module
