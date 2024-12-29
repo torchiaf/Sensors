@@ -1,10 +1,10 @@
 FROM golang:alpine AS build
-ADD . /sensors
-WORKDIR /sensors
+ADD . /build-dir
+WORKDIR /build-dir
 RUN go build -o init
 
 FROM alpine
 WORKDIR /controller
-COPY --from=build /sensors /controller
+COPY --from=build /build-dir /controller
 
 CMD ["./init"]

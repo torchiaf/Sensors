@@ -11,6 +11,7 @@ import (
 	"time"
 
 	amqp "github.com/rabbitmq/amqp091-go"
+	"github.com/torchiaf/Sensors/controller/config"
 )
 
 func failOnError(err error, msg string) {
@@ -33,14 +34,7 @@ func randInt(min int, max int) int {
 
 func exec() (res string, err error) {
 
-	host := os.Getenv("RABBITMQ_CLUSTER_SERVICE_HOST")
-	port := os.Getenv("RABBITMQ_CLUSTER_SERVICE_PORT_AMQP")
-
-	username := os.Getenv("RABBITMQ_USERNAME")
-	password := os.Getenv("RABBITMQ_PASSWORD")
-	// monitorRoutingKey := os.Getenv("ROUTE_1")
-
-	address := fmt.Sprintf("amqp://%s:%s@%s:%s/", username, password, host, port)
+	address := fmt.Sprintf("amqp://%s:%s@%s:%s/", config.Config.RabbitMQ.Username, config.Config.RabbitMQ.Password, config.Config.RabbitMQ.Host, config.Config.RabbitMQ.Port)
 
 	conn, err := amqp.Dial(address)
 	failOnError(err, "Failed to connect to RabbitMQ")
@@ -103,8 +97,9 @@ func exec() (res string, err error) {
 func main() {
 	rand.Seed(time.Now().UTC().UnixNano())
 
-	for {
+	log.Printf("Config %+v", config.Config)
 
+	for {
 		log.Printf(" [x] Requesting")
 		res, err := exec()
 		failOnError(err, "Failed to handle RPC request")
