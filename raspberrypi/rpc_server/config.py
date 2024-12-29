@@ -1,6 +1,9 @@
 import os
 import builtins
+import yaml
+from pathlib import Path
 import pika
+from models import Module 
 
 # Redefine print to show the output when running in containers
 def print(*args):
@@ -14,3 +17,7 @@ password = os.environ.get('RABBITMQ_PASSWORD')
 
 credentials = pika.PlainCredentials(username, password)
 connectionParams = pika.ConnectionParameters(host,port,'/',credentials)
+
+# Module configs
+moduleDict = yaml.safe_load(Path('/sensors/module.yaml').read_text())
+module = Module(moduleDict)
