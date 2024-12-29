@@ -42,18 +42,20 @@ spec:
               protocol: TCP
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-          {{- with .Values.volumeMounts }}
           volumeMounts:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
+            - name: modules
+              mountPath: "/sensors"
           envFrom:
             - secretRef:
                 name: {{ include "sensors.fullname" . }}-rabbitmq
                 optional: false
-      {{- with .Values.volumes }}
       volumes:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+      - name: modules
+        configMap:
+          name: {{ include "sensors.fullname" . }}
+          items:
+          - key: modules
+            path: modules.yaml
       {{- with .Values.controller.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
@@ -67,71 +69,83 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
 ---
+{{- range $index, $elem := .Values.sensors.modules }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "sensors.fullname" . }}-raspberrypi
+  name: {{ include "sensors.fullname" $ }}-{{ $elem.name }}
   labels:
-    {{- include "sensors.labels" . | nindent 4 }}
+    {{- include "sensors.labels" $ | nindent 4 }}
 spec:
-  {{- if not .Values.autoscaling.enabled }}
-  replicas: {{ .Values.replicaCount }}
+  {{- if not $.Values.autoscaling.enabled }}
+  replicas: {{ $.Values.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
-      {{- include "sensors.selectorLabels" . | nindent 6 }}
+      {{- include "sensors.selectorLabels" $ | nindent 6 }}
   template:
     metadata:
-      {{- with .Values.podAnnotations }}
+      {{- with $.Values.podAnnotations }}
       annotations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "sensors.labels" . | nindent 8 }}
-        {{- with .Values.podLabels }}
+        {{- include "sensors.labels" $ | nindent 8 }}
+        {{- with $.Values.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
     spec:
-      {{- with .Values.imagePullSecrets }}
+      {{- with $.Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "sensors.serviceAccountName" . }}
+      serviceAccountName: {{ include "sensors.serviceAccountName" $ }}
       securityContext:
-        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+        {{- toYaml $.Values.podSecurityContext | nindent 8 }}
       containers:
-        - name: {{ .Chart.Name }}
+        - name: {{ $elem.name }}
           securityContext:
             privileged: true
-          image: "{{ .Values.raspberrypi.image.repository }}:{{ .Values.raspberrypi.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.raspberrypi.image.pullPolicy }}
+          {{- with get $.Values $elem.type }}
+          image: "{{ .image.repository }}:{{ .image.tag | default $.Chart.AppVersion }}"
+          imagePullPolicy: {{ .image.pullPolicy }}
+          {{- end }}
           ports:
             - name: http
-              containerPort: {{ .Values.service.port }}
+              containerPort: {{ $.Values.service.port }}
               protocol: TCP
           resources:
-            {{- toYaml .Values.resources | nindent 12 }}
-          {{- with .Values.volumeMounts }}
+            {{- toYaml $.Values.resources | nindent 12 }}
+          {{- with $.Values.volumeMounts }}
           volumeMounts:
             {{- toYaml . | nindent 12 }}
           {{- end }}
+          env:
+            - name: RPC_QUEUE
+              value: {{ $elem.rpc_queue }}
+          {{- range $device := $elem.devices }}
+            {{- toYaml $device.env | nindent 12 }}
+          {{- end }}
           envFrom:
             - secretRef:
-                name: {{ include "sensors.fullname" . }}-rabbitmq
+                name: {{ include "sensors.fullname" $ }}-rabbitmq
                 optional: false
-      {{- with .Values.volumes }}
+      {{- with $.Values.volumes }}
       volumes:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.raspberrypi.nodeSelector }}
+      nodeName: {{ $elem.nodeName }}
+      {{- with $.Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.affinity }}
+      {{- with $.Values.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.tolerations }}
+      {{- with $.Values.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+---
+{{- end }}
