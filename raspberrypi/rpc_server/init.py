@@ -1,6 +1,6 @@
 import pika
 from dht11 import read
-from settings import connectionParams, print
+from config import connectionParams, print
 
 connection = pika.BlockingConnection(connectionParams)
 

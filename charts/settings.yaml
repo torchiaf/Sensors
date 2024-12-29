@@ -6,10 +6,11 @@ sensors:
     - name: raspberrypi-0
       nodeName: raspberrypi
       type: raspberrypi
-      rpc_queue: raspberrypi-0
+      routingKey: raspberrypi-0
       devices:
         - name: dht11
-          env:
+          type: dht11
+          config:
             - name: DHT11_PIN
               value: "12"
             - name: RASPBERRYPI_VERSION
@@ -17,11 +18,12 @@ sensors:
     # - name: raspberrypi-1
     #   nodeName: raspberrypi-1
     #   type: raspberrypi
-    #   rpc_queue: raspberrypi-0
+    #   routingKey: raspberrypi-1
     #   devices:
     #     - name: dht11
-    #       env:
+    #       type: dht11
+    #       config:
     #         - name: DHT11_PIN
     #           value: "12"
     #         - name: RASPBERRYPI_VERSION
-    #           value: "3"
+    #           value: "5"

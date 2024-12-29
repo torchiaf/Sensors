@@ -2,7 +2,7 @@ import os
 import builtins
 import pika
 
-# Redefine print do show output when running in containers
+# Redefine print to show the output when running in containers
 def print(*args):
     builtins.print(*args, sep=' ', end='\n', file=None, flush=True)
 
