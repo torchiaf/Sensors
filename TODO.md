@@ -11,3 +11,4 @@
   - sensor CRD
   - raspberry CRD
 - each sensor should have a library to be called by rpc_server
+  - call libraries defined in settings.modules definition
