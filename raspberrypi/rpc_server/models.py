@@ -6,7 +6,7 @@ class DeviceConfig:
 class Device:
     def __init__(self, device):
         self.name = device["name"]
-        self.name = device["type"]
+        self.type = device["type"]
         self.config = [DeviceConfig(x) for x in device["config"]]
         
     def getConfig(self, name):
