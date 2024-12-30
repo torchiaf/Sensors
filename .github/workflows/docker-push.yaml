@@ -51,5 +51,6 @@ jobs:
           file: ${{ inputs.working-directory }}/Dockerfile
           context: ${{ inputs.working-directory }}
           platforms: ${{ inputs.platforms }}
+          provenance: false
           push: true
           tags: ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.REPO_LC }}/${{ inputs.image-name }}:${{ inputs.tag-name }}
