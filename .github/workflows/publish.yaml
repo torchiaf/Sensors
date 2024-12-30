@@ -23,12 +23,23 @@ jobs:
       contents: read
       packages: write
 
-  build-and-push-raspberrypi:
+  build-and-push-raspberrypi3b:
     uses: ./.github/workflows/docker-push.yaml
     with:
-      image-name: raspberrypi
+      image-name: raspberrypi3b
       tag-name: ${{ github.ref_name }}
-      working-directory: raspberrypi
+      working-directory: raspberrypi3b
+      platforms: linux/arm64
+    permissions:
+      contents: read
+      packages: write
+
+  build-and-push-raspberrypi5:
+    uses: ./.github/workflows/docker-push.yaml
+    with:
+      image-name: raspberrypi5
+      tag-name: ${{ github.ref_name }}
+      working-directory: raspberrypi5
       platforms: linux/arm64
     permissions:
       contents: read

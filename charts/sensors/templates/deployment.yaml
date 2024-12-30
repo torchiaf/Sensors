@@ -106,10 +106,8 @@ spec:
         - name: {{ $elem.name }}
           securityContext:
             privileged: true
-          {{- with get $.Values $elem.type }}
-          image: "{{ .image.repository }}:{{ .image.tag | default $.Chart.AppVersion }}"
-          imagePullPolicy: {{ .image.pullPolicy }}
-          {{- end }}
+          image: "{{ $elem.image.repository }}:{{ $elem.image.tag | default $.Chart.AppVersion }}"
+          imagePullPolicy: {{ $elem.image.pullPolicy }}
           ports:
             - name: http
               containerPort: {{ $.Values.service.port }}

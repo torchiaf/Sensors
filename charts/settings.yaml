@@ -5,25 +5,33 @@ sensors:
   modules:
     - name: raspberrypi-0
       nodeName: raspberrypi
-      type: raspberrypi
+      type: "Raspberry Pi 3B"
+      image:
+        repository: ghcr.io/torchiaf/sensors/raspberrypi3b
+        pullPolicy: Always
+        tag: "main"
       routingKey: raspberrypi-0
       devices:
         - name: dht11
-          type: dht11
+          type: DHT11
           config:
             - name: DHT11_PIN
               value: "12"
             - name: RASPBERRYPI_VERSION
               value: "3"
-    # - name: raspberrypi-1
-    #   nodeName: raspberrypi-1
-    #   type: raspberrypi
-    #   routingKey: raspberrypi-1
-    #   devices:
-    #     - name: dht11
-    #       type: dht11
-    #       config:
-    #         - name: DHT11_PIN
-    #           value: "12"
-    #         - name: RASPBERRYPI_VERSION
-    #           value: "5"
+    - name: raspberrypi-1
+      nodeName: raspberrypi-1
+      type: "Raspberry Pi 5"
+      image:
+        repository: ghcr.io/torchiaf/sensors/raspberrypi5
+        pullPolicy: Always
+        tag: "main"
+      routingKey: raspberrypi-1
+      devices:
+        - name: dht11
+          type: DHT11
+          config:
+            - name: DHT11_PIN
+              value: "D12"
+            - name: RASPBERRYPI_VERSION
+              value: "5"
