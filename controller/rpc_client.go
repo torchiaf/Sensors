@@ -32,7 +32,7 @@ func randInt(min int, max int) int {
 	return min + rand.Intn(max-min)
 }
 
-func exec() (res string, err error) {
+func exec(routingKey string) (res string, err error) {
 
 	address := fmt.Sprintf("amqp://%s:%s@%s:%s/", config.Config.RabbitMQ.Username, config.Config.RabbitMQ.Password, config.Config.RabbitMQ.Host, config.Config.RabbitMQ.Port)
 
@@ -71,10 +71,10 @@ func exec() (res string, err error) {
 	defer cancel()
 
 	err = ch.PublishWithContext(ctx,
-		"",          // exchange
-		"rpc_queue", // routing key
-		false,       // mandatory
-		false,       // immediate
+		"",         // exchange
+		routingKey, // routing key
+		false,      // mandatory
+		false,      // immediate
 		amqp.Publishing{
 			ContentType:   "text/plain",
 			CorrelationId: corrId,
@@ -100,11 +100,13 @@ func main() {
 	log.Printf("Config %+v", config.Config)
 
 	for {
-		log.Printf(" [x] Requesting")
-		res, err := exec()
-		failOnError(err, "Failed to handle RPC request")
+		for _, module := range config.Config.Modules {
+			log.Printf(" [x] Requesting on {%s, %s, %s}", module.Name, module.Type, module.RoutingKey)
+			res, err := exec(module.RoutingKey)
+			failOnError(err, "Failed to handle RPC request")
 
-		log.Printf(" [.] Got %+v", res)
+			log.Printf(" [%s] Got %+v", module.Name, res)
+		}
 
 		time.Sleep(time.Second)
 	}
