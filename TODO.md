@@ -1,4 +1,3 @@
-- Get rabbitmq RoutingKey name from config maps in controller and module pods
 - Implement OpenAPI definitions
 - Golang process on master node to call the rabbitMQ endpoints, fetch data and update CRDS
 - Create Rancher extensions to handle sensors CRDs
@@ -6,7 +5,6 @@
 - Create a CRD for each sensor
 - Create a CRD for each raspberry module
 - Bind raspberry CRD to each installed sensor CRD
-- The controller should call a Route for each sensor to fetch data
 - Rancher UI should display
   - sensor CRD
   - raspberry CRD
