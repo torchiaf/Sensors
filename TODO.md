@@ -5,8 +5,15 @@
 - Create a CRD for each sensor
 - Create a CRD for each raspberry module
 - Bind raspberry CRD to each installed sensor CRD
+- Sensor's CRDS should be updated ONLY by controller pod
 - Rancher UI should display
   - sensor CRD
   - raspberry CRD
-- each sensor should have a library to be called by rpc_server
-  - call libraries defined in settings.modules definition
+- Each sensor (device) should have a docker image to produce an executable file and should specify a compatibility list with modules (raspberry version)
+- The module's docker image for each module's type (Raspberry's version) should be generic
+  - It should connect to RabbitMQ bus and call the device executable given the action received from controller on RabbitMQ messages
+  - RabbitMQ messages should specify the action and the expected result (format)
+  - It should call the device executable depending on API interface defined in the settings file
+- GitHub CI should build the executable file using the docker image of the device
+  - Defining Device's builder docker image and interface is demanded to the developer
+  - The device's API should be defined in the settings file
