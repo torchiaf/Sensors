@@ -7,7 +7,7 @@ metadata:
 data:
   modules: |
   {{- toYaml .Values.sensors.modules | nindent 4 }}
-{{- range $elem := .Values.sensors.modules }}
-  {{ $elem.name }}: |
-  {{- toYaml $elem | nindent 4 }}
+{{- range $module := .Values.sensors.modules }}
+  {{ $module.name }}: |
+  {{- toYaml $module | nindent 4 }}
 {{- end}}

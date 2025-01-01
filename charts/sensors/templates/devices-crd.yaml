@@ -1,0 +1,11 @@
+{{- range $device := .Values.sensors.devices }}
+apiVersion: sensors.io/v1
+kind: Device
+metadata:
+  name: {{ $device.name }}
+  labels:
+    {{- include "sensors.labels" $ | nindent 4 }}
+spec:
+  type: {{ $device.type }}
+---
+{{- end}}
