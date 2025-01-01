@@ -17,3 +17,5 @@
 - GitHub CI should build the executable file using the docker image of the device
   - Defining Device's builder docker image and interface is demanded to the developer
   - The device's API should be defined in the settings file
+- Define a builder kit for devices
+  - The device <-> rpc-server interface should use OpenAPI definition to build a skeleton and call the executable built in devices docker images.
