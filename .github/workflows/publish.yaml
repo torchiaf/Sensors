@@ -28,7 +28,7 @@ jobs:
     with:
       image-name: raspberrypi3b
       tag-name: ${{ github.ref_name }}
-      working-directory: raspberrypi3b
+      working-directory: module/raspberrypi3b
       platforms: linux/arm64
     permissions:
       contents: read
@@ -39,7 +39,7 @@ jobs:
     with:
       image-name: raspberrypi5
       tag-name: ${{ github.ref_name }}
-      working-directory: raspberrypi5
+      working-directory: module/raspberrypi5
       platforms: linux/arm64
     permissions:
       contents: read
