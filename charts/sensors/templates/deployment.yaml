@@ -69,11 +69,11 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
 ---
-{{- range $index, $elem := .Values.sensors.modules }}
+{{- range $index, $module := .Values.sensors.modules }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "sensors.fullname" $ }}-{{ $elem.name }}
+  name: {{ include "sensors.fullname" $ }}-{{ $module.name }}
   labels:
     {{- include "sensors.labels" $ | nindent 4 }}
 spec:
@@ -103,11 +103,11 @@ spec:
       securityContext:
         {{- toYaml $.Values.podSecurityContext | nindent 8 }}
       containers:
-        - name: {{ $elem.name }}
+        - name: {{ $module.name }}
           securityContext:
             privileged: true
-          image: "{{ $elem.image.repository }}:{{ $elem.image.tag | default $.Chart.AppVersion }}"
-          imagePullPolicy: {{ $elem.image.pullPolicy }}
+          image: "{{ $module.image.repository }}:{{ $module.image.tag | default $.Chart.AppVersion }}"
+          imagePullPolicy: {{ $module.image.pullPolicy }}
           ports:
             - name: http
               containerPort: {{ $.Values.service.port }}
@@ -126,9 +126,9 @@ spec:
         configMap:
           name: {{ include "sensors.fullname" $ }}
           items:
-          - key: {{ $elem.name }}
+          - key: {{ $module.name }}
             path: module.yaml
-      nodeName: {{ $elem.nodeName }}
+      nodeName: {{ $module.nodeName }}
       {{- with $.Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

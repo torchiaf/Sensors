@@ -1,0 +1,23 @@
+{{- range $module := .Values.sensors.modules }}
+apiVersion: sensors.io/v1
+kind: Module
+metadata:
+  name: {{ $module.name }}
+  labels:
+    {{- include "sensors.labels" $ | nindent 4 }}
+spec:
+  type: {{ $module.type }}
+  nodeName: {{ $module.nodeName }}
+  image:
+    repository: {{ $module.image.repository }}
+    tag: {{ $module.image.tag }}
+  devices:
+  {{- range $device := $module.devices }}
+    - name: {{ $device.name }}
+      {{- with $device.config }}
+      config:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+  {{- end}}
+---
+{{- end}}
