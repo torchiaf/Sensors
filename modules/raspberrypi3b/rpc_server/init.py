@@ -1,9 +1,7 @@
-import os
+import subprocess
+import ast
 import pika
-from dht11 import read
 from config import module, connectionParams, print
-
-os.environ['RASPBERRYPI_VERSION'] = module.getDevice("dht11").getConfig("RASPBERRYPI_VERSION")
 
 connection = pika.BlockingConnection(connectionParams)
 
@@ -12,10 +10,13 @@ channel = connection.channel()
 channel.queue_declare(queue=module.routingKey)
 
 def on_request(ch, method, props, body):
-    n = int(body)
+    
+    dict_str = body.decode("UTF-8")
+    params = ast.literal_eval(dict_str)
+    print(repr(params))
 
-    print(f" receive {n}")
-    response = read()
+    res = subprocess.run(['./{}'.format(params["device"])], stdout=subprocess.PIPE, text=True)
+    response = res.stdout
 
     ch.basic_publish(
         exchange='',

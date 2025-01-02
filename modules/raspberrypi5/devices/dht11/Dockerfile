@@ -30,4 +30,4 @@ RUN apt-get install libgpiod2
 RUN pi-venv/bin/python -m pip install pika --upgrade
 
 # Build init.py
-RUN pi-venv/bin/pyinstaller --onefile --target-architecture arm64 --add-data=pi-venv/lib64/python3.11/site-packages/adafruit_blinka:adafruit_blinka/ /app/init.py
+RUN pi-venv/bin/pyinstaller --onefile --target-architecture arm64 --add-data=pi-venv/lib64/python3.11/site-packages/adafruit_blinka:adafruit_blinka/ -n dht11 /app/main.py

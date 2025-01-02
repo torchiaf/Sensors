@@ -19,8 +19,5 @@ RUN git clone https://github.com/torchiaf/Adafruit_Python_DHT.git
 RUN cd Adafruit_Python_DHT && /pi-venv/bin/python3 setup.py install --force-pi${RASPBERRYPI_VERSION}
 RUN /pi-venv/bin/pip3 install ./Adafruit_Python_DHT --config-settings="--build-option=--force-pi${RASPBERRYPI_VERSION}"
 
-# RabbitMQ
-RUN pi-venv/bin/python -m pip install pika --upgrade
-
-# Build init.py
-RUN pi-venv/bin/pyinstaller --onefile /app/init.py
+# Build
+RUN pi-venv/bin/pyinstaller --onefile -n dht11 /app/main.py

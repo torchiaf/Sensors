@@ -91,4 +91,4 @@ jobs:
           platforms: linux/arm64
           # TODO 1 builder image arg for each device; needs to create a Dockerfile at runtime for each module, given the list of devices
           build-args: |
-            BUILD_IMAGE=${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.REPO_LC }}/device/dht11:${{ github.ref_name }}-${{ matrix.module }}
+            LIB_IMAGE=${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.REPO_LC }}/device/dht11:${{ github.ref_name }}-${{ matrix.module }}
