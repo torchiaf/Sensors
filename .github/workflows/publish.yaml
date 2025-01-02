@@ -8,40 +8,48 @@ on:
       - main
     paths:
       - 'controller/**'
-      - 'module/**'
+      - 'modules/**'
       - 'scripts/**'
       - '.github/**'
 
 jobs:
   build-and-push-controller:
-    uses: ./.github/workflows/docker-push.yaml
-    with:
-      image-name: controller
-      tag-name: ${{ github.ref_name }}
-      working-directory: controller
-      platforms: ''
+    runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
+    secrets: inherit 
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Run Build and Publish Docker image
+        id: controller
+        uses: ./.github/actions/docker-push
+        with:
+          image-name: controller
+          tag-name: ${{ github.ref_name }}
+          working-directory: controller
+          platforms: ''
 
-  build-and-push-raspberrypi3b:
-    uses: ./.github/workflows/docker-push.yaml
-    with:
-      image-name: raspberrypi3b
-      tag-name: ${{ github.ref_name }}
-      working-directory: module/raspberrypi3b
-      platforms: linux/arm64
+  build-and-push-devices:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        module: [raspberrypi3b, raspberrypi5]
+        device: [DHT11]
     permissions:
       contents: read
       packages: write
-
-  build-and-push-raspberrypi5:
-    uses: ./.github/workflows/docker-push.yaml
-    with:
-      image-name: raspberrypi5
-      tag-name: ${{ github.ref_name }}
-      working-directory: module/raspberrypi5
-      platforms: linux/arm64
-    permissions:
-      contents: read
-      packages: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Run Build and Publish Docker image
+        id: devices
+        uses: ./.github/actions/docker-push
+        with:
+          image-name: device/${{ matrix.device }}
+          tag-name: ${{ github.ref_name }}-${{ matrix.module }}
+          working-directory: modules/${{ matrix.module }}/devices/${{ matrix.device }}
+          platforms: linux/arm64
