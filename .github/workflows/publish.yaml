@@ -8,40 +8,87 @@ on:
       - main
     paths:
       - 'controller/**'
-      - 'module/**'
+      - 'modules/**'
       - 'scripts/**'
       - '.github/**'
 
+env:
+  REGISTRY: ghcr.io
+  REPO_LC: sensors
+
 jobs:
   build-and-push-controller:
-    uses: ./.github/workflows/docker-push.yaml
-    with:
-      image-name: controller
-      tag-name: ${{ github.ref_name }}
-      working-directory: controller
-      platforms: ''
+    runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Run Build and Publish Docker image
+        id: controller
+        uses: ./.github/actions/docker-push
+        with:
+          registry: ${{ env.REGISTRY }}
+          repository_lc: ${{ env.REPO_LC }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          image-name: controller
+          tag-name: ${{ github.ref_name }}
+          working-directory: controller
+          platforms: ''
 
-  build-and-push-raspberrypi3b:
-    uses: ./.github/workflows/docker-push.yaml
-    with:
-      image-name: raspberrypi3b
-      tag-name: ${{ github.ref_name }}
-      working-directory: module/raspberrypi3b
-      platforms: linux/arm64
+  build-and-push-devices:
+    runs-on: ubuntu-latest
+    strategy:
+      # TODO generate matrix
+      matrix:
+        module: [raspberrypi3b, raspberrypi5]
+        device: [dht11]
     permissions:
       contents: read
       packages: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Run Build and Publish Docker image
+        id: devices
+        uses: ./.github/actions/docker-push
+        with:
+          registry: ${{ env.REGISTRY }}
+          repository_lc: ${{ env.REPO_LC }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          image-name: device/${{ matrix.device }}
+          tag-name: ${{ github.ref_name }}-${{ matrix.module }}
+          working-directory: modules/${{ matrix.module }}/devices/${{ matrix.device }}
+          platforms: linux/arm64
 
-  build-and-push-raspberrypi5:
-    uses: ./.github/workflows/docker-push.yaml
-    with:
-      image-name: raspberrypi5
-      tag-name: ${{ github.ref_name }}
-      working-directory: module/raspberrypi5
-      platforms: linux/arm64
+  build-and-push-modules:
+    runs-on: ubuntu-latest
+    needs: build-and-push-devices
+    strategy:
+      matrix:
+        # TODO generate list of modules
+        module: [raspberrypi3b, raspberrypi5]
     permissions:
       contents: read
       packages: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Run Build and Publish Docker image
+        id: modules
+        uses: ./.github/actions/docker-push
+        with:
+          registry: ${{ env.REGISTRY }}
+          repository_lc: ${{ env.REPO_LC }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          image-name: module/${{ matrix.module }}
+          tag-name: ${{ github.ref_name }}
+          working-directory: modules/${{ matrix.module }}
+          platforms: linux/arm64
+          # TODO 1 builder image arg for each device; needs to create a Dockerfile at runtime for each module, given the list of devices
+          build-args: |
+            BUILD_IMAGE=${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.REPO_LC }}/device/dht11:${{ github.ref_name }}-${{ matrix.module }}
