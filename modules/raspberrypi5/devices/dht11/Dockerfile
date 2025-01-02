@@ -1,6 +1,6 @@
 FROM debian AS build
 
-ADD ./rpc_server /rpc_server
+ADD ./app /app
 
 RUN apt-get update
 # RUN apt-get -y upgrade
@@ -30,12 +30,4 @@ RUN apt-get install libgpiod2
 RUN pi-venv/bin/python -m pip install pika --upgrade
 
 # Build init.py
-RUN pi-venv/bin/pyinstaller --onefile --target-architecture arm64 --add-data=pi-venv/lib64/python3.11/site-packages/adafruit_blinka:adafruit_blinka/ /rpc_server/init.py
-
-FROM ubuntu
-
-WORKDIR /rpc_server
-
-COPY --from=build /dist/init /rpc_server
-
-CMD ["./init"]
+RUN pi-venv/bin/pyinstaller --onefile --target-architecture arm64 --add-data=pi-venv/lib64/python3.11/site-packages/adafruit_blinka:adafruit_blinka/ /app/init.py

@@ -7,7 +7,7 @@ sensors:
       type: "Raspberry Pi 3B"
       nodeName: raspberrypi
       image:
-        repository: ghcr.io/torchiaf/sensors/raspberrypi3b
+        repository: ghcr.io/torchiaf/sensors/module/raspberrypi3b
         pullPolicy: Always
         tag: "main"
       routingKey: raspberrypi-0
@@ -23,7 +23,7 @@ sensors:
       type: "Raspberry Pi 5"
       nodeName: raspberrypi-1
       image:
-        repository: ghcr.io/torchiaf/sensors/raspberrypi5
+        repository: ghcr.io/torchiaf/sensors/module/raspberrypi5
         pullPolicy: Always
         tag: "main"
       routingKey: raspberrypi-1

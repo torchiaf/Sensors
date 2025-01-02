@@ -1,8 +1,8 @@
-FROM python:3.9.21-alpine AS build
+FROM python:3.9.21-alpine
 
 ARG RASPBERRYPI_VERSION=3
 
-ADD ./rpc_server /rpc_server
+ADD ./app /app
 
 RUN apk update
 RUN apk add git build-base
@@ -23,12 +23,4 @@ RUN /pi-venv/bin/pip3 install ./Adafruit_Python_DHT --config-settings="--build-o
 RUN pi-venv/bin/python -m pip install pika --upgrade
 
 # Build init.py
-RUN pi-venv/bin/pyinstaller --onefile /rpc_server/init.py
-
-FROM python:3.9.21-alpine
-
-WORKDIR /rpc_server
-
-COPY --from=build /dist/init /rpc_server
-
-CMD ["./init"]
+RUN pi-venv/bin/pyinstaller --onefile /app/init.py
