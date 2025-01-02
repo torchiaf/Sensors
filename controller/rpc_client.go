@@ -5,13 +5,12 @@ import (
 	"fmt"
 	"log"
 	"math/rand"
-	"os"
-	"strconv"
-	"strings"
 	"time"
 
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/torchiaf/Sensors/controller/config"
+	"github.com/torchiaf/Sensors/controller/models"
+	"github.com/torchiaf/Sensors/controller/utils"
 )
 
 func failOnError(err error, msg string) {
@@ -32,7 +31,7 @@ func randInt(min int, max int) int {
 	return min + rand.Intn(max-min)
 }
 
-func exec(routingKey string) (res string, err error) {
+func exec(routingKey string, message models.Message) (res string, err error) {
 
 	address := fmt.Sprintf("amqp://%s:%s@%s:%s/", config.Config.RabbitMQ.Username, config.Config.RabbitMQ.Password, config.Config.RabbitMQ.Host, config.Config.RabbitMQ.Port)
 
@@ -70,6 +69,8 @@ func exec(routingKey string) (res string, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
+	log.Printf("Msg: %s:", utils.ToString(message))
+
 	err = ch.PublishWithContext(ctx,
 		"",         // exchange
 		routingKey, // routing key
@@ -79,7 +80,7 @@ func exec(routingKey string) (res string, err error) {
 			ContentType:   "text/plain",
 			CorrelationId: corrId,
 			ReplyTo:       q.Name,
-			Body:          []byte(strconv.Itoa(1)),
+			Body:          []byte(utils.ToString(message)),
 		})
 	failOnError(err, "Failed to publish a message")
 
@@ -102,7 +103,16 @@ func main() {
 	for {
 		for _, module := range config.Config.Modules {
 			log.Printf(" [x] Requesting on {%s, %s, %s}", module.Name, module.Type, module.RoutingKey)
-			res, err := exec(module.RoutingKey)
+
+			res, err := exec(
+				module.RoutingKey,
+				models.Message{
+					Device: "dht11",
+					// Args: map[string]interface{}{
+					// 	"foo": "bar",
+					// },
+				},
+			)
 			failOnError(err, "Failed to handle RPC request")
 
 			log.Printf(" [%s] Got %+v", module.Name, res)
@@ -110,16 +120,4 @@ func main() {
 
 		time.Sleep(time.Second)
 	}
-}
-
-func bodyFrom(args []string) int {
-	var s string
-	if (len(args) < 2) || os.Args[1] == "" {
-		s = "1"
-	} else {
-		s = strings.Join(args[1:], " ")
-	}
-	n, err := strconv.Atoi(s)
-	failOnError(err, "Failed to convert arg to integer")
-	return n
 }

@@ -15,9 +15,7 @@ class Device:
 class Module:
     def __init__(self, module):
         self.name = module["name"]
-        self.nodeName = module["nodeName"]
         self.type = module["type"]
-        self.routingKey = module["routingKey"]
         self.devices = [Device(x) for x in module["devices"]]
         
     def getDevice(self, name):

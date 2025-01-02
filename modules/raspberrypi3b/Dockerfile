@@ -1,11 +1,29 @@
-ARG BUILD_IMAGE=no-image
+ARG LIB_IMAGE=no-image
 
-FROM ${BUILD_IMAGE} AS build
+FROM ${LIB_IMAGE} AS lib
+
+FROM python:3.9.21-alpine AS build
+
+ADD ./rpc_server /rpc_server
+
+RUN apk update
+RUN apk add build-base
+
+RUN python3 -m venv pi-venv
+RUN pi-venv/bin/python3 -m pip install --upgrade pip
+RUN pi-venv/bin/pip install -U pyyaml pyinstaller
+
+# RabbitMQ
+RUN pi-venv/bin/python -m pip install pika --upgrade
+
+# Build rpc_server
+RUN pi-venv/bin/pyinstaller --onefile /rpc_server/init.py
 
 FROM python:3.9.21-alpine
 
-WORKDIR /app
+WORKDIR /rpc_server
 
-COPY --from=build /dist/init /app
+COPY --from=build /dist/init /rpc_server
+COPY --from=lib /dist/dht11 /rpc_server
 
 CMD ["./init"]
