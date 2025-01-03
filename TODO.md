@@ -2,20 +2,11 @@
 - Golang process on master node to call the rabbitMQ endpoints, fetch data and update CRDS
 - Create Rancher extensions to handle sensors CRDs
 - Create a manifest.yaml file for each supported sensors (svg, description, link to homepage)
-- Create a CRD for each sensor
-- Create a CRD for each raspberry module
-- Bind raspberry CRD to each installed sensor CRD
 - Sensor's CRDS should be updated ONLY by controller pod
 - Rancher UI should display
   - sensor CRD
   - raspberry CRD
-- Each sensor (device) should have a docker image to produce an executable file and should specify a compatibility list with modules (raspberry version)
-- The module's docker image for each module's type (Raspberry's version) should be generic
-  - It should connect to RabbitMQ bus and call the device executable given the action received from controller on RabbitMQ messages
-  - RabbitMQ messages should specify the action and the expected result (format)
-  - It should call the device executable depending on API interface defined in the settings file
-- GitHub CI should build the executable file using the docker image of the device
-  - Defining Device's builder docker image and interface is demanded to the developer
-  - The device's API should be defined in the settings file
+- Defining Device's builder docker image and interface is demanded to the developer
 - Define a builder kit for devices
   - The device <-> rpc-server interface should use OpenAPI definition to build a skeleton and call the executable built in devices docker images.
+  - The device's API should be defined in the settings file
