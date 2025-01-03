@@ -17,6 +17,9 @@ inputs:
   tag-name:
     description: ""
     required: true
+  file:
+    description: ""
+    required: true
   working-directory:
     description: ""
     required: true
@@ -55,7 +58,7 @@ runs:
     - name: Build and push
       uses: docker/build-push-action@v6
       with:
-        file: ${{ inputs.working-directory }}/Dockerfile
+        file: ${{ inputs.file }}
         context: ${{ inputs.working-directory }}
         build-args: ${{ inputs.build-args }}
         platforms: ${{ inputs.platforms }}
