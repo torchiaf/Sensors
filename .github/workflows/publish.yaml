@@ -59,8 +59,14 @@ jobs:
     needs: define-modules-matrix
     strategy:
       matrix:
+        ## TODO remove this with, dinamically generated
+          # include:
+          #   - module: raspberrypi3b
+          #     device: dht11
+          #   - module: raspberrypi5
+          #     device: dht11
+        ##
         module: ${{ fromJSON(needs.define-modules-matrix.outputs.modules) }}
-        # TODO generate devices sub matrix & exclude/include
         device: [dht11]
     permissions:
       contents: read
