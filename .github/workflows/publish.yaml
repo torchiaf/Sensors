@@ -36,6 +36,7 @@ jobs:
           image-name: controller
           tag-name: ${{ github.ref_name }}
           working-directory: controller
+          file: controller/Dockerfile
           platforms: ''
 
   build-and-push-devices:
@@ -62,6 +63,7 @@ jobs:
           image-name: device/${{ matrix.device }}
           tag-name: ${{ github.ref_name }}-${{ matrix.module }}
           working-directory: modules/${{ matrix.module }}/devices/${{ matrix.device }}
+          file: modules/${{ matrix.module }}/devices/${{ matrix.device }}/Dockerfile
           platforms: linux/arm64
 
   build-and-push-modules:
@@ -87,7 +89,8 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           image-name: module/${{ matrix.module }}
           tag-name: ${{ github.ref_name }}
-          working-directory: modules/${{ matrix.module }}
+          working-directory: modules
+          file: modules/${{ matrix.module }}/Dockerfile
           platforms: linux/arm64
           # TODO 1 builder image arg for each device; needs to create a Dockerfile at runtime for each module, given the list of devices
           build-args: |
