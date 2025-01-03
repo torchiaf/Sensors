@@ -39,12 +39,28 @@ jobs:
           file: controller/Dockerfile
           platforms: ''
 
+  define-modules-matrix:
+    runs-on: ubuntu-latest
+
+    outputs:
+      modules: ${{ steps.modules.outputs.modules }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Define Modules
+        id: modules
+        run: |
+          echo "modules=$(sh ./scripts/list-directories.sh modules json ^raspberry)" >> $GITHUB_OUTPUT
+
   build-and-push-devices:
     runs-on: ubuntu-latest
+    needs: define-modules-matrix
     strategy:
-      # TODO generate matrix
       matrix:
-        module: [raspberrypi3b, raspberrypi5]
+        module: ${{ fromJSON(needs.define-modules-matrix.outputs.modules) }}
+        # TODO generate devices sub matrix & exclude/include
         device: [dht11]
     permissions:
       contents: read
@@ -68,11 +84,12 @@ jobs:
 
   build-and-push-modules:
     runs-on: ubuntu-latest
-    needs: build-and-push-devices
+    needs:
+      - define-modules-matrix
+      - build-and-push-devices
     strategy:
       matrix:
-        # TODO generate list of modules
-        module: [raspberrypi3b, raspberrypi5]
+        module: ${{ fromJSON(needs.define-modules-matrix.outputs.modules) }}
     permissions:
       contents: read
       packages: write
@@ -83,7 +100,7 @@ jobs:
       - name: Generate Module Device list
         id: devices_list
         shell: sh
-        run: echo "devices=$(sh ./scripts/list-directories.sh modules/${{ matrix.module }}/devices)\n" >> $GITHUB_OUTPUT
+        run: echo "devices=$(sh ./scripts/list-directories.sh modules/${{ matrix.module }}/devices csv)\n" >> $GITHUB_OUTPUT
       - name: Generate Module Dockerfile
         id: generate_dockerfile
         shell: sh
