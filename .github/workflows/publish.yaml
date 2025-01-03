@@ -35,7 +35,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           image-name: controller
           tag-name: ${{ github.ref_name }}
-          working-directory: controller
+          context: controller
           file: controller/Dockerfile
           platforms: ''
 
@@ -62,7 +62,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           image-name: device/${{ matrix.device }}
           tag-name: ${{ github.ref_name }}-${{ matrix.module }}
-          working-directory: modules/${{ matrix.module }}/devices/${{ matrix.device }}
+          context: modules/${{ matrix.module }}/devices/${{ matrix.device }}
           file: modules/${{ matrix.module }}/devices/${{ matrix.device }}/Dockerfile
           platforms: linux/arm64
 
@@ -80,6 +80,14 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 1
+      - name: Generate Module Device list
+        id: devices_list
+        shell: sh
+        run: echo "devices=$(sh ./scripts/list-directories.sh modules/${{ matrix.module }}/devices)\n" >> $GITHUB_OUTPUT
+      - name: Generate Module Dockerfile
+        id: generate_dockerfile
+        shell: sh
+        run: sh ./scripts/generate-module-dockerfile.sh ${{ matrix.module }} ${{ steps.devices_list.outputs.devices }} ${{ env.REGISTRY }} ${{ github.repository_owner }} ${{ env.REPO_LC }} ${{ github.ref_name }} modules/${{ matrix.module }}/Dockerfile
       - name: Run Build and Publish Docker image
         id: modules
         uses: ./.github/actions/docker-push
@@ -89,9 +97,6 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           image-name: module/${{ matrix.module }}
           tag-name: ${{ github.ref_name }}
-          working-directory: modules
+          context: modules
           file: modules/${{ matrix.module }}/Dockerfile
           platforms: linux/arm64
-          # TODO 1 builder image arg for each device; needs to create a Dockerfile at runtime for each module, given the list of devices
-          build-args: |
-            LIB_IMAGE=${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.REPO_LC }}/device/dht11:${{ github.ref_name }}-${{ matrix.module }}
