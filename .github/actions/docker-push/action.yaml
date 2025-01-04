@@ -22,7 +22,7 @@ inputs:
     required: true
   context:
     description: ""
-    required: true
+    default: .
   build-args:
     description: ""
     default: ""

@@ -115,6 +115,5 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           image-name: module/${{ matrix.module }}
           tag-name: ${{ github.ref_name }}
-          context: .
           file: modules/${{ matrix.module }}/Dockerfile
           platforms: linux/arm64
