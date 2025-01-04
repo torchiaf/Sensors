@@ -6,7 +6,6 @@
 - Rancher UI should display
   - sensor CRD
   - raspberry CRD
-- Defining Device's builder docker image and interface is demanded to the developer
 - Define a builder kit for devices
   - The device <-> rpc-server interface should use OpenAPI definition to build a skeleton and call the executable built in devices docker images.
-  - The device's API should be defined in the settings file
+  - The device's API should be defined in the settings file by dev
