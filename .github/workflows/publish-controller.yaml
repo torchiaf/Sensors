@@ -1,0 +1,39 @@
+name: Publish Controller
+
+on:
+  push:
+    tags:
+      - v*
+    branches:
+      - main
+    paths:
+      - 'controller/**'
+      - 'scripts/**'
+      - '.github/**'
+
+env:
+  REGISTRY: ghcr.io
+  REPO_LC: sensors
+
+jobs:
+  build-and-push-controller:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Run Build and Publish Docker image
+        id: controller
+        uses: ./.github/actions/docker-push
+        with:
+          registry: ${{ env.REGISTRY }}
+          repository_lc: ${{ env.REPO_LC }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          image-name: controller
+          tag-name: ${{ github.ref_name }}
+          context: controller
+          file: controller/Dockerfile
+          platforms: ''
