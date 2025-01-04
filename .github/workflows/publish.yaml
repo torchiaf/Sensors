@@ -55,7 +55,7 @@ jobs:
       - name: Define Modules
         id: modules
         run: |
-          echo "modules=$(sh ./scripts/list-directories.sh modules json ^raspberry)\n" >> $GITHUB_OUTPUT
+          echo "modules=$(sh ./scripts/list-directories.sh modules json)\n" >> $GITHUB_OUTPUT
 
   build-and-push-devices:
     runs-on: ubuntu-latest
@@ -115,6 +115,6 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           image-name: module/${{ matrix.module }}
           tag-name: ${{ github.ref_name }}
-          context: modules
+          context: .
           file: modules/${{ matrix.module }}/Dockerfile
           platforms: linux/arm64
