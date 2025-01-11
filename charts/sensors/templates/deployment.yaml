@@ -45,6 +45,17 @@ spec:
           volumeMounts:
             - name: modules
               mountPath: "/sensors"
+            - name: ide-storage
+              mountPath: "/circuit"
+          env:
+            - name: APP_NAME
+              value: {{ .Release.Name }}
+            - name: APP_NAMESPACE
+              value: {{ .Release.Namespace }}
+            - name: APP_GROUP
+              value: {{ .Values.group }}
+            - name: APP_VERSION
+              value: {{ .Values.version }}
           envFrom:
             - secretRef:
                 name: {{ include "sensors.fullname" . }}-rabbitmq
@@ -56,6 +67,9 @@ spec:
           items:
           - key: modules
             path: modules.yaml
+      - name: ide-storage
+        persistentVolumeClaim:
+          claimName: {{ include "sensors.fullname" . }}-ide-storage
       {{- with .Values.controller.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
@@ -143,3 +157,66 @@ spec:
       {{- end }}
 ---
 {{- end }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "sensors.fullname" . }}-ide
+  labels:
+    {{- include "sensors.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "sensors.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "sensors.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "sensors.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: ide
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.ide.image.repository }}:{{ .Values.ide.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.ide.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.ide.service.port }}
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: ide-storage
+              mountPath: "/circuit"
+      volumes:
+      - name: ide-storage
+        persistentVolumeClaim:
+          claimName: {{ include "sensors.fullname" . }}-ide-storage
+      {{- with .Values.ide.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
