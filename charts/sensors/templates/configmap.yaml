@@ -11,3 +11,12 @@ data:
   {{ $module.name }}: |
   {{- toYaml $module | nindent 4 }}
 {{- end}}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "sensors.fullname" . }}-ide
+  labels:
+    {{- include "sensors.labels" . | nindent 4 }}
+binaryData:
+  go-scaffold: {{ .Files.Get "assets/go-scaffold" | b64enc }}
