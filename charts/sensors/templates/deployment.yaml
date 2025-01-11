@@ -202,6 +202,9 @@ spec:
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
+            - name: modules
+              mountPath: "/circuit/modules.yaml"
+              subPath: "modules.yaml"
             - name: ide-storage
               mountPath: "/circuit"
       initContainers:
@@ -214,6 +217,12 @@ spec:
             - name: go-scaffold
               mountPath: "/sensors/ide"
       volumes:
+      - name: modules
+        configMap:
+          name: {{ include "sensors.fullname" . }}
+          items:
+          - key: modules
+            path: modules.yaml
       - name: ide-storage
         persistentVolumeClaim:
           claimName: {{ include "sensors.fullname" . }}-ide-storage
