@@ -45,6 +45,8 @@ spec:
           volumeMounts:
             - name: modules
               mountPath: "/sensors"
+            - name: circuit-templates
+              mountPath: "/sensors/circuit"
             - name: ide-storage
               mountPath: "/circuit"
           env:
@@ -67,6 +69,14 @@ spec:
           items:
           - key: modules
             path: modules.yaml
+      - name: circuit-templates
+        configMap:
+          name: {{ include "sensors.fullname" . }}-assets
+          items:
+          - key: circuit-deployment
+            path: deployment.yaml
+          - key: circuit-configmap
+            path: configmap.yaml
       - name: ide-storage
         persistentVolumeClaim:
           claimName: {{ include "sensors.fullname" . }}-ide-storage
@@ -228,7 +238,7 @@ spec:
           claimName: {{ include "sensors.fullname" . }}-ide-storage
       - name: go-scaffold
         configMap:
-          name: {{ include "sensors.fullname" . }}-ide
+          name: {{ include "sensors.fullname" . }}-assets
           items:
           - key: go-scaffold
             path: go-scaffold

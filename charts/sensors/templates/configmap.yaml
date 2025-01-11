@@ -15,8 +15,13 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "sensors.fullname" . }}-ide
+  name: {{ include "sensors.fullname" . }}-assets
   labels:
     {{- include "sensors.labels" . | nindent 4 }}
 binaryData:
   go-scaffold: {{ .Files.Get "assets/go-scaffold" | b64enc }}
+data:
+  circuit-deployment: |
+    {{ .Files.Get "assets/circuit/deployment.yaml" | nindent 4 }}
+  circuit-configmap: |
+    {{ .Files.Get "assets/circuit/configmap.yaml" | nindent 4 }}
