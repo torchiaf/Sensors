@@ -204,10 +204,25 @@ spec:
           volumeMounts:
             - name: ide-storage
               mountPath: "/circuit"
+      initContainers:
+        - name: go-scaffold
+          image: busybox:1.28
+          command: ['sh', '-c', "tar -xvzf /sensors/ide/go-scaffold -C /circuit"]
+          volumeMounts:
+            - name: ide-storage
+              mountPath: "/circuit"
+            - name: go-scaffold
+              mountPath: "/sensors/ide"
       volumes:
       - name: ide-storage
         persistentVolumeClaim:
           claimName: {{ include "sensors.fullname" . }}-ide-storage
+      - name: go-scaffold
+        configMap:
+          name: {{ include "sensors.fullname" . }}-ide
+          items:
+          - key: go-scaffold
+            path: go-scaffold
       {{- with .Values.ide.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
