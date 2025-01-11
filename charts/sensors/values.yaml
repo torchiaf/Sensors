@@ -15,6 +15,22 @@ controller:
   nodeSelector:
     node-role.kubernetes.io/control-plane: "true"
 
+ide:
+  image:
+    repository: ghcr.io/torchiaf/sensors-ide
+    # This sets the pull policy for images.
+    pullPolicy: Always
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: "main"
+  nodeSelector:
+    node-role.kubernetes.io/control-plane: "true"
+  service:
+    type: ClusterIP
+    port: 3000
+
+ideStorage:
+  storage: 2Gi
+
 # This will set the replicaset count more information can be found here: https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/
 replicaCount: 1
 
