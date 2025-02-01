@@ -3,7 +3,6 @@ FROM debian AS build
 ADD ./app /app
 
 RUN apt-get update
-
 # RUN apt remove python3-rpi.gpio
 RUN apt-get install -y git python3-pip
 RUN apt-get install -y python3-venv
