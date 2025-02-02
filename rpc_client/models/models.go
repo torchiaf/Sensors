@@ -1,10 +1,16 @@
 package models
 
-type RabbitMQConfig struct {
+type RabbitMQ struct {
 	Host     string
 	Port     string
 	Username string
 	Password string
+}
+
+type Config struct {
+	IsDev    bool
+	RabbitMQ RabbitMQ
+	Modules  map[string]Module
 }
 
 type Module struct {
@@ -24,12 +30,6 @@ type Device struct {
 type DeviceConfig struct {
 	Name  string `yaml:"name"`
 	Value string `yaml:"value"`
-}
-
-type Config struct {
-	IsDev    bool
-	RabbitMQ RabbitMQConfig
-	Modules  []Module
 }
 
 type Message struct {

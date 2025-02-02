@@ -1,16 +1,18 @@
 module github.com/torchiaf/Sensors/controller
 
-go 1.23.0
+go 1.23.1
 
 toolchain go1.23.4
 
 require (
 	github.com/fatih/structs v1.1.0
 	github.com/itchyny/gojq v0.12.17
-	github.com/rabbitmq/amqp091-go v1.10.0
+	github.com/torchiaf/Sensors/rpc_client v0.0.0-20250202022913-2a42e8d8bd20
 	gopkg.in/yaml.v2 v2.4.0
 	k8s.io/client-go v0.32.0
 )
+
+require github.com/rabbitmq/amqp091-go v1.10.0 // indirect
 
 require (
 	github.com/fxamacker/cbor/v2 v2.7.0 // indirect

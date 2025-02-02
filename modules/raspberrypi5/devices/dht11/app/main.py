@@ -1,3 +1,5 @@
+import os
+import json
 import board
 import adafruit_dht
 from config import device, pin
@@ -15,7 +17,7 @@ try:
     d['t'] = dhtDevice.temperature
     d['h'] = dhtDevice.humidity
     
-    print(d)
+    print(json.dumps(d))
 
 except Exception as error:
     # dhtDevice.exit()

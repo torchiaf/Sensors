@@ -1,4 +1,5 @@
 import os
+import json
 import Adafruit_DHT
 from config import device
 
@@ -14,7 +15,7 @@ try:
     d['t'] = temperature
     d['h'] = humidity
     
-    print(d)
+    print(json.dumps(d))
 
 except:
     print("read() error")

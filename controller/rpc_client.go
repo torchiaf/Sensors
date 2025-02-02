@@ -2,16 +2,20 @@ package main
 
 import (
 	"context"
-	"fmt"
+	"encoding/json"
 	"log"
-	"math/rand"
+	"math"
+	"strconv"
 	"time"
 
-	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/torchiaf/Sensors/controller/config"
-	"github.com/torchiaf/Sensors/controller/models"
-	"github.com/torchiaf/Sensors/controller/utils"
+	"github.com/torchiaf/Sensors/rpc_client"
 )
+
+type Dht11 struct {
+	T float64 `json:"t"`
+	H float64 `json:"h"`
+}
 
 func failOnError(err error, msg string) {
 	if err != nil {
@@ -19,103 +23,50 @@ func failOnError(err error, msg string) {
 	}
 }
 
-func randomString(l int) string {
-	bytes := make([]byte, l)
-	for i := 0; i < l; i++ {
-		bytes[i] = byte(randInt(65, 90))
-	}
-	return string(bytes)
-}
-
-func randInt(min int, max int) int {
-	return min + rand.Intn(max-min)
-}
-
-func exec(routingKey string, message models.Message) (res string, err error) {
-
-	address := fmt.Sprintf("amqp://%s:%s@%s:%s/", config.Config.RabbitMQ.Username, config.Config.RabbitMQ.Password, config.Config.RabbitMQ.Host, config.Config.RabbitMQ.Port)
-
-	conn, err := amqp.Dial(address)
-	failOnError(err, "Failed to connect to RabbitMQ")
-	defer conn.Close()
-
-	ch, err := conn.Channel()
-	failOnError(err, "Failed to open a channel")
-	defer ch.Close()
-
-	q, err := ch.QueueDeclare(
-		"",    // name
-		false, // durable
-		false, // delete when unused
-		true,  // exclusive
-		false, // noWait
-		nil,   // arguments
-	)
-	failOnError(err, "Failed to declare a queue")
-
-	msgs, err := ch.Consume(
-		q.Name, // queue
-		"",     // consumer
-		true,   // auto-ack
-		false,  // exclusive
-		false,  // no-local
-		false,  // no-wait
-		nil,    // args
-	)
-	failOnError(err, "Failed to register a consumer")
-
-	corrId := randomString(32)
-
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	log.Printf("Msg: %s:", utils.ToString(message))
-
-	err = ch.PublishWithContext(ctx,
-		"",         // exchange
-		routingKey, // routing key
-		false,      // mandatory
-		false,      // immediate
-		amqp.Publishing{
-			ContentType:   "text/plain",
-			CorrelationId: corrId,
-			ReplyTo:       q.Name,
-			Body:          []byte(utils.ToString(message)),
-		})
-	failOnError(err, "Failed to publish a message")
-
-	for d := range msgs {
-		if corrId == d.CorrelationId {
-			res = string(d.Body)
-			failOnError(err, "Error msgs")
-			break
-		}
-	}
-
-	return
-}
-
 func main() {
-	rand.Seed(time.Now().UTC().UnixNano())
-
 	log.Printf("Config %+v", config.Config)
 
+	client := rpc_client.New(context.Background())
+
 	for {
+
+		temperature := ""
+
 		for _, module := range config.Config.Modules {
 			log.Printf(" [x] Requesting on {%s, %s, %s}", module.Name, module.Type, module.RoutingKey)
 
-			res, err := exec(
+			res, err := client.Read(
 				module.RoutingKey,
-				models.Message{
-					Device: "dht11",
-					// Args: map[string]interface{}{
-					// 	"foo": "bar",
-					// },
-				},
+				"dht11",
+				[]string{},
 			)
-			failOnError(err, "Failed to handle RPC request")
+			failOnError(err, "Failed to handle RPC request: dht11")
 
-			log.Printf(" [%s] Got %+v", module.Name, res)
+			log.Printf(" [%s] [%s] Got %+v", module.Name, "dht11", res)
+
+			if module.Name == "raspberrypi-0" {
+				var obj Dht11
+				err = json.Unmarshal([]byte(res), &obj)
+				if err != nil {
+					log.Fatalf("error: %v", err)
+				}
+
+				temperature = strconv.Itoa(int(math.Round(obj.T)))
+			}
+
+			if module.Name == "raspberrypi-1" {
+				res1, err := client.Write(
+					module.RoutingKey,
+					"tm1637",
+					[]string{
+						"temperature",
+						temperature,
+					},
+				)
+				failOnError(err, "Failed to handle RPC request: tm1637")
+
+				log.Printf(" [%s] [%s] Got %+v", module.Name, "tm1637", res1)
+			}
 		}
 
 		time.Sleep(time.Second)

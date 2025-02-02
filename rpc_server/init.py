@@ -13,9 +13,18 @@ def on_request(ch, method, props, body):
     
     dict_str = body.decode("UTF-8")
     params = ast.literal_eval(dict_str)
-    print(repr(params))
+    
+    command = [
+        './{}'.format(params["device"]),
+        params["action"]
+    ]
+    
+    for arg in params["args"]:
+        command.append(arg)
+    
+    print(" [x] exec: {}, replyTo: {}".format(command, props.reply_to))
 
-    res = subprocess.run(['./{}'.format(params["device"])], stdout=subprocess.PIPE, text=True)
+    res = subprocess.run(command, stdout=subprocess.PIPE, text=True)
     response = res.stdout
 
     ch.basic_publish(

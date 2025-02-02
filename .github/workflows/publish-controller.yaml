@@ -8,6 +8,7 @@ on:
       - main
     paths:
       - 'controller/**'
+      - 'rpc_client/**'
       - 'scripts/**'
       - '.github/**'
 

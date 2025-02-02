@@ -3,8 +3,8 @@ package config
 import (
 	"os"
 
-	"github.com/torchiaf/Sensors/controller/models"
-	"github.com/torchiaf/Sensors/controller/utils"
+	"github.com/torchiaf/Sensors/rpc_client/models"
+	"github.com/torchiaf/Sensors/rpc_client/utils"
 )
 
 func isDevEnv() bool {
@@ -14,17 +14,19 @@ func isDevEnv() bool {
 }
 
 func initConfig() models.Config {
+
 	modules := utils.ParseYamlFile[[]models.Module]("/sensors/modules.yaml")
+	modulesMap := utils.Map(modules, func(m models.Module) string { return m.Name })
 
 	c := models.Config{
 		IsDev: isDevEnv(),
-		RabbitMQ: models.RabbitMQConfig{
+		RabbitMQ: models.RabbitMQ{
 			Host:     os.Getenv("RABBITMQ_CLUSTER_SERVICE_HOST"),
 			Port:     os.Getenv("RABBITMQ_CLUSTER_SERVICE_PORT_AMQP"),
 			Username: os.Getenv("RABBITMQ_USERNAME"),
 			Password: os.Getenv("RABBITMQ_PASSWORD"),
 		},
-		Modules: modules,
+		Modules: modulesMap,
 	}
 
 	return c
