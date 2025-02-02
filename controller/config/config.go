@@ -18,7 +18,13 @@ func initConfig() models.Config {
 
 	c := models.Config{
 		IsDev: isDevEnv(),
-		RabbitMQ: models.RabbitMQConfig{
+		Release: models.Release{
+			Name:      utils.IfNull(os.Getenv("APP_NAME"), "sensors"),
+			Namespace: utils.IfNull(os.Getenv("APP_NAMESPACE"), "sensors"),
+			Group:     utils.IfNull(os.Getenv("APP_GROUP"), "sensors.io"),
+			Version:   utils.IfNull(os.Getenv("APP_VERSION"), "v1"),
+		},
+		RabbitMQ: models.RabbitMQ{
 			Host:     os.Getenv("RABBITMQ_CLUSTER_SERVICE_HOST"),
 			Port:     os.Getenv("RABBITMQ_CLUSTER_SERVICE_PORT_AMQP"),
 			Username: os.Getenv("RABBITMQ_USERNAME"),

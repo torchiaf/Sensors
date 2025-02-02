@@ -1,10 +1,17 @@
 package models
 
-type RabbitMQConfig struct {
+type RabbitMQ struct {
 	Host     string
 	Port     string
 	Username string
 	Password string
+}
+
+type Release struct {
+	Name      string
+	Namespace string
+	Group     string
+	Version   string
 }
 
 type Module struct {
@@ -28,7 +35,8 @@ type DeviceConfig struct {
 
 type Config struct {
 	IsDev    bool
-	RabbitMQ RabbitMQConfig
+	Release  Release
+	RabbitMQ RabbitMQ
 	Modules  []Module
 }
 
@@ -36,4 +44,16 @@ type Message struct {
 	Device string   `json:"device"`
 	Action string   `json:"action"`
 	Args   []string `json:"args"`
+}
+
+type Circuit struct {
+	APIVersion string `yaml:"apiVersion"`
+	Kind       string `yaml:"kind"`
+	Metadata   struct {
+		Name      string `yaml:"name"`
+		Namespace string `yaml:"namespace"`
+	} `yaml:"metadata"`
+	Spec struct {
+		Id string `yaml:"id"`
+	} `yaml:"spec"`
 }
