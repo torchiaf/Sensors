@@ -1,3 +1,4 @@
+
 - Store RMQ user and pass in another way than env vars
 - Ide, Fix missing RMQ user and pass: missing /sensors/modules.yaml - (modules.yaml is in circuit dir, update rpc_client to get the path of modules.yaml as param)
 - Modules, Devices, Circuit -> should be created by Crd POST, not helm install
@@ -24,3 +25,4 @@
 - Go Plugins to define Circuit workloads
 - Circuit crd should have play, stop, pause fields
 - Circuit crd should have a base64 to store code-source
+- Add diagram to README.md file, mermaid: https://github.com/mermaid-js/mermaid
