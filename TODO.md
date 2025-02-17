@@ -1,4 +1,6 @@
 
+- Devices should emit data via RMQ broker
+  - e.g.: camera devices executables should send video frames when activated by roc calls
 - Store RMQ user and pass in another way than env vars
 - Ide, Fix missing RMQ user and pass: missing /sensors/modules.yaml - (modules.yaml is in circuit dir, update rpc_client to get the path of modules.yaml as param)
 - Modules, Devices, Circuit -> should be created by Crd POST, not helm install
